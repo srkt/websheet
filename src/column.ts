@@ -1,9 +1,17 @@
-import {ColumnOptions} from './columnOptions'
+import { ColumnOptions } from "./columnOptions";
 
-export class Column{
+export type dataType = "number" | "string" | "date" | "boolean";
 
-    constructor(options: ColumnOptions) {
-            
-    }
-
+export interface IColumn {
+    filterable?: boolean;
+    draggable?: boolean;
+    sortable?: boolean;
+    template?:string;
+    groupable?: boolean;
+    headerStyles?:Object;
+    elementStyles?:Object;
+    field: string;
+    dataType: dataType;
+    name?: string;
 }
+

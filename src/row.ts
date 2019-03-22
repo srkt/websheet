@@ -1,13 +1,11 @@
-import { Column } from "./column";
+import { IColumn } from "./column";
 
 export class Row {
 
-    columns: Array<Column>
+    public columns: Array<IColumn>
 
-    /**
-     *
-     */
-    constructor(columns: Array<Column>) {
+    constructor(columns: Array<IColumn>) {
         this.columns  = columns;
+        
     }
 }

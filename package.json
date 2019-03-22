@@ -11,10 +11,17 @@
   "author": "Ravi",
   "license": "ISC",
   "devDependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "@types/ramda": "^0.25.43",
     "ts-loader": "^5.3.1",
     "typescript": "^3.2.2",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "ramda": "^0.26.1",
+    "rxjs": "^6.3.3"
   }
 }

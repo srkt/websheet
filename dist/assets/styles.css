@@ -1,0 +1,20 @@
+.ws-container{
+    width:100%;
+    margin:auto;
+}
+
+.ws-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.ws-header-item{
+    font-size: 1.5em;
+    font-weight: bold;
+    background-color: gainsboro;
+}
+
+.ws-elem-wrapper{
+    background-color: whitesmoke;
+}

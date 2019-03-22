@@ -19,7 +19,7 @@ module.exports = {
     extensions: [ '.ts', '.js' ]
   },
   devServer: {
-    contentBase: '/dist',
+    // contentBase: '/dist',
     port: 9001,
     compress: true,
     publicPath: '/dist'
