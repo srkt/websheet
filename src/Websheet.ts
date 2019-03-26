@@ -1,6 +1,7 @@
 import { SheetOptions } from "./SheetOptions";
 import DataService from "./WsData";
 import { IColumn } from "./column";
+import { ColumnOptionsView } from "./columnOptionsView";
 
 declare global {
   interface Window {
@@ -39,7 +40,11 @@ export class WebSheet {
       DataService.getData(this.options.dataOptions.read.url, null).then(
         (data: any[]) => {
           this.data = data;
+          const t0 = performance.now();
           this.bindData(data);
+
+          var t1 = performance.now();
+          console.log("Call to binding data took " + (t1 - t0) + " milliseconds.");
         }
       );
     }
@@ -51,38 +56,53 @@ export class WebSheet {
 
     const root = this.root;
 
-    const rootChild = document.createElement("div");
-    rootChild.classList.add("ws-root", "ws-container");
+    const table = this.generateTable(data);
 
-    const header = this.generateHeader(this.options.Columns);
-    rootChild.appendChild(header);
-
-    for (let i = 0; i < data.length; i++) {
-      const item = data[i];
-      const row = document.createElement("div");
-      row.classList.add("ws-row", "ws-row-" + i);
-
-      for (let name in item) {
-        const column = this.options.getColumn(name);
-        const elem = this.generateElement(item[name], column);
-        row.appendChild(elem);
-      }
-
-      rootChild.appendChild(row);
-    }
-
-    root.appendChild(rootChild);
+    root.appendChild(table);
 
     this.element.appendChild(root);
   }
 
-  generateHeader(columns: IColumn[]) {
+  generateTable(data:any[]){
 
-      const header = document.createElement("div");
+    const rootChild = document.createElement("table");
+    rootChild.classList.add("ws-root", "ws-container");
+    this.generateHeader(this.options.Columns,rootChild);
+    this.generateRows(data,rootChild);
+    return rootChild;
+
+  }
+
+  generateRows(data:any[], parent:HTMLTableElement){
+
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+      const row = this.generateRow(item,i);
+      parent.appendChild(row);
+    }
+  }
+
+  generateRow(item:any,index:number){
+
+    const row = document.createElement("tr");
+    row.classList.add("ws-row", "ws-row-" + index);
+
+    for (let name in item) {
+      const column = this.options.getColumn(name);
+      const elem = this.generateElement(item[name], column);
+      row.appendChild(elem);
+    }
+
+    return row;
+  }
+
+  generateHeader(columns: IColumn[],parent:HTMLTableElement) {
+
+      const header = document.createElement("tr");
       header.classList.add('ws-row','ws-header-row');
 
       columns.forEach((val,i)=>{
-        const col = document.createElement("div");
+        const col = document.createElement("th");
 
         col.classList.add('ws-header-elem');
         
@@ -95,24 +115,60 @@ export class WebSheet {
 
         // col.style.flex = '1';
         const txt = document.createElement("span");
+
         txt.textContent = val.name || val.field;
         col.appendChild(txt);
+
+        if(this.options.filterable) {
+          const filter = document.createElement("span");
+          filter.setAttribute("data-filter-for",val.field);
+          filter.classList.add('ws-filterable');
+          col.appendChild(filter);          
+        }
+
         header.appendChild(col);
       });
 
-      return header;
+      if(this.options.filterable){
+      header.addEventListener('click',(event:Event)=>{
+        if((<HTMLElement>event.target).className.indexOf('ws-filterable') !== -1){
+          const fieldName = (<HTMLElement>event.target).getAttribute("data-filter-for");
+          const column = this.options.Columns.filter(c => c.field === fieldName)[0];
+
+          document.body.appendChild(ColumnOptionsView.Generate(column).columnView.element);
+        }
+      });
+    }
+
+      parent.appendChild(header);
   }
 
   private generateElement(data: any, column: IColumn) {
-    const elem = document.createElement("div");
-    elem.classList.add("ws-elem",'ws-elem-' + column.field);
-    //elem.style.flex = "1";
-    const e = document.createElement("span");
-    e.setAttribute("data-type", column.dataType);
-    e.className = "ws-elem-text";
-    e.textContent = data;
-    elem.appendChild(e);
-    return elem;
+
+    const td = document.createElement("td");
+    td.setAttribute("data-type", column.dataType);
+    td.classList.add("ws-elem","ws-elem-text",'ws-elem-' + column.field);
+
+    const tagName = !column.readonly && !column.locked ? "input":"span";
+
+    const e = document.createElement(tagName);
+
+
+    if(tagName === "span"){
+      e.textContent = data;
+    }else{
+      e.setAttribute("type","text");
+      (<HTMLInputElement>e).value =  data;
+    }
+
+
+
+
+    // e.disabled = column.readonly || column.locked;
+
+    td.appendChild(e);
+
+    return td;
   }
 
   static Websheet(selector: string, options?: SheetOptions): WebSheet {

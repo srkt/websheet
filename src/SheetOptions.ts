@@ -6,7 +6,7 @@ export class SheetOptions{
     public dataOptions:IDataOptions;
     
     private _columnCache:Map<string,IColumn> = new Map();
-    
+    filterable:boolean = true;
     Columns:IColumn[] = [];
     
     addColumn(column:IColumn) {
@@ -16,7 +16,11 @@ export class SheetOptions{
 
     getColumn(fieldName:string){
         let column = this._columnCache.get(fieldName);
-        if(column) return column;
+        if(column) {
+            return column;
+        }
+
+
 
         column = this.Columns.filter(c => c.field === fieldName)[0];
 

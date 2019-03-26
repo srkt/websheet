@@ -1,0 +1,92 @@
+[
+	{
+		"field": "id",
+		"dataType": "number"
+	},
+	{
+		"field": "first_name",
+		"dataType": "string",
+		"name":"First Name",
+		"readonly":"false"
+	},
+	{
+		"field": "last_name",
+		"dataType": "string"
+	},
+	{
+		"field": "email",
+		"dataType": "string"
+	},
+	{
+		"field": "gender",
+		"dataType": "string"
+	},
+	{
+		"field": "ip_address",
+		"dataType": "string"
+	},
+	{
+		"field": "company_name",
+		"dataType": "string"
+	},
+	{
+		"field": "buzzword",
+		"dataType": "string"
+	},
+	{
+		"field": "city",
+		"dataType": "string"
+	},
+	{
+		"field": "country",
+		"dataType": "string"
+	},
+	{
+		"field": "postal_code",
+		"dataType": "string"
+	},
+	{
+		"field": "time_zone",
+		"dataType": "string"
+	},
+	{
+		"field": "currency_code",
+		"dataType": "string"
+	},
+	{
+		"field": "stock_name",
+		"dataType": "string"
+	},
+	{
+		"field": "race",
+		"dataType": "string"
+	},
+	{
+		"field": "ssn",
+		"dataType": "string"
+	},
+	{
+		"field": "vin",
+		"dataType": "string"
+	},
+	{
+		"field": "color",
+		"dataType": "string"
+	},
+	{
+		"field": "isbn",
+		"dataType": "string"
+	},
+	{
+		"field": "user_name",
+		"dataType": "string"
+	},
+	{
+		"field": "car_make",
+		"dataType": "string"
+	},
+	{
+		"field": "university",
+		"dataType": "string"
+	}
+]

@@ -3,7 +3,7 @@ import {Promise} from 'es6-promise';
 
 class DataService{
     
-    getData<T>(url:string, config:AxiosRequestConfig):Promise<T>{
+    getData<T>(url:string, config?:AxiosRequestConfig):Promise<T>{
         
         const promise = new Promise<T>((resolve,reject)=>{
 

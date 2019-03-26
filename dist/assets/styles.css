@@ -1,20 +1,21 @@
 .ws-container{
-    width:100%;
-    margin:auto;
 }
 
 .ws-row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
 }
 
-.ws-header-item{
-    font-size: 1.5em;
-    font-weight: bold;
-    background-color: gainsboro;
+.ws-header-elem, .ws-elem-text {
+    border: 0.2px solid gainsboro;
 }
 
-.ws-elem-wrapper{
-    background-color: whitesmoke;
+
+.ws-header-elem, .ws-elem-text input {
+    border: none;
+}
+
+.ws-filterable::after{
+    content: '\2807';
+    padding-right: 5px;
+    float: right;
+    cursor: pointer;
 }

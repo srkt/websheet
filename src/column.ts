@@ -13,5 +13,7 @@ export interface IColumn {
     field: string;
     dataType: dataType;
     name?: string;
+    readonly:boolean;
+    locked:boolean;
 }
 
