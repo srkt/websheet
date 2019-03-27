@@ -10,23 +10,51 @@ declare global {
 }
 declare var document: Document;
 
+
+
 export class WebSheet {
 
   element: HTMLElement;
   data: any[] = [];
   root: DocumentFragment;
 
+  private positionX:number;
+  private positionY:number;
+
+  parent:HTMLElement;
+
+  private rootTable:HTMLTableElement;
+ 
+  private self:WebSheet;
+   
   get columnCount() {
     return this.options.Columns.length;
   }
 
   constructor(selector: string, public options?: SheetOptions) {
     if (!selector) throw new Error("invalid selector passed");
-
+    this.self = this;
     this.element = document.querySelector(selector);
 
+    if(!this.element) throw new Error('Unable to find the selector. Please assign proper selector');
+
+    this.element.style.height = this.options.height ? this.options.height : '100%';
+    this.element.style.width = this.options.width ? this.options.width : '100%';
+
+    this.parent = this.element.parentElement;
+    this.parent.style.overflowY = 'auto';
+
+    this.parent.removeEventListener('scroll',this.getScrollPosition);
+    this.parent.onscroll = null;
+
+    this.parent.addEventListener('scroll',this.getScrollPosition);
+    this.parent.onscroll = this.getScrollPosition;
+
+
     if (this.data.length) {
+
       this.bindData(this.data);
+
     } else {
       if (
         !this.options ||
@@ -41,6 +69,7 @@ export class WebSheet {
         (data: any[]) => {
           this.data = data;
           const t0 = performance.now();
+
           this.bindData(data);
 
           var t1 = performance.now();
@@ -50,36 +79,89 @@ export class WebSheet {
     }
   }
 
+  getScrollPosition = (event:UIEvent) => {
+    
+    const loadsize = this.options.clientInfinityScrollDataSize;
+    const element = <HTMLElement>(event.target);
+    if(element.scrollTop%element.offsetHeight>0.6*element.offsetHeight){
+      // console.log('load data');
+      const data = this.loadData(loadsize);
+      this.rootTable.appendChild(this.generateRows(data));
+    }
+  }
+
+
   private bindData(data: any[]) {
 
     this.root = document.createDocumentFragment();
 
     const root = this.root;
 
-    const table = this.generateTable(data);
+    if(this.options.clientInfinityScrollDataSize){
+      data = this.loadData(this.options.clientInfinityScrollDataSize);
+    }
 
+    const table = this.generateTable();
+
+    const header = this.generateHeader(this.options.Columns);
+    table.appendChild(header);
+
+    const rows = this.generateRows(data);
+    table.appendChild(rows);
+
+    // docfrag element
     root.appendChild(table);
 
+    // parent node
     this.element.appendChild(root);
   }
 
-  generateTable(data:any[]){
+  loadIndex = 0;
+
+  loadData(size:number){
+
+    const data = this.data.filter((v,i) =>{
+      return i >= this.loadIndex*size  && i < (this.loadIndex+1)*size;
+    });
+    this.loadIndex++;
+
+    return data;
+  }
+
+  generateTable(){
 
     const rootChild = document.createElement("table");
     rootChild.classList.add("ws-root", "ws-container");
-    this.generateHeader(this.options.Columns,rootChild);
-    this.generateRows(data,rootChild);
+    this.rootTable = rootChild;
     return rootChild;
 
   }
 
-  generateRows(data:any[], parent:HTMLTableElement){
+  generateRows(data:any[]){
+
+    const rows = document.createDocumentFragment();
 
     for (let i = 0; i < data.length; i++) {
       const item = data[i];
       const row = this.generateRow(item,i);
-      parent.appendChild(row);
+      // parent.appendChild(row);
+      rows.appendChild(row);
     }
+
+    return rows;
+  }
+
+  appendNewRows(data:any[]){
+
+    const dfrag = document.createDocumentFragment();
+
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+      const row = this.generateRow(item,i);
+      dfrag.appendChild(row);
+    }
+
+    return dfrag;
   }
 
   generateRow(item:any,index:number){
@@ -96,7 +178,7 @@ export class WebSheet {
     return row;
   }
 
-  generateHeader(columns: IColumn[],parent:HTMLTableElement) {
+  generateHeader(columns: IColumn[]) {
 
       const header = document.createElement("tr");
       header.classList.add('ws-row','ws-header-row');
@@ -140,7 +222,9 @@ export class WebSheet {
       });
     }
 
-      parent.appendChild(header);
+    return header;
+
+      // parent.appendChild(header);
   }
 
   private generateElement(data: any, column: IColumn) {

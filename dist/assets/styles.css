@@ -1,5 +1,7 @@
 .ws-container{
+    overflow: auto;
 }
+
 
 .ws-row {
 }

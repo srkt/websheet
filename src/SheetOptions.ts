@@ -7,6 +7,11 @@ export class SheetOptions{
     
     private _columnCache:Map<string,IColumn> = new Map();
     filterable:boolean = true;
+    
+    height:string;
+    width:string;
+    clientInfinityScrollDataSize = 100;
+
     Columns:IColumn[] = [];
     
     addColumn(column:IColumn) {
